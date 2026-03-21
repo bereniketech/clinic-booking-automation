@@ -1,9 +1,3 @@
-import type { Clinic } from '@clinic/shared';
-
-export interface FindClinicParams {
-  clinicId: string;
-}
-
-export async function findClinicById(_params: FindClinicParams): Promise<Clinic | null> {
-  return null;
-}
+export { createDbClient } from './client'
+export type { DbClient } from './client'
+export type { Database, Tables, TablesInsert, TablesUpdate, Enums } from './types/database.types'

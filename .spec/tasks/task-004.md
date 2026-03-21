@@ -1,7 +1,7 @@
 ---
 task: 004
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [003]
 ---
 
@@ -137,18 +137,36 @@ _Skills: /whatsapp-automation — Meta Cloud API patterns; /code-writing-softwar
 ---
 
 ## Acceptance Criteria
-- [ ] Invalid signature returns 403; message not enqueued
-- [ ] Valid signature returns 200 within 50ms; job in queue
-- [ ] Challenge GET returns correct challenge string
-- [ ] `express.raw()` used on webhook route (raw body preserved for sig check)
-- [ ] `crypto.timingSafeEqual` used for comparison
-- [ ] Unit tests pass for all sig verification cases
-- [ ] `/verify` passes
+- [x] Invalid signature returns 403; message not enqueued
+- [x] Valid signature returns 200 within 50ms; job in queue
+- [x] Challenge GET returns correct challenge string
+- [x] `express.raw()` used on webhook route (raw body preserved for sig check)
+- [x] `crypto.timingSafeEqual` used for comparison
+- [x] Unit tests pass for all sig verification cases
+- [x] `/verify` passes
 
 ---
 
 ## Handoff to Next Task
-**Files changed:** _(fill via /task-handoff)_
-**Decisions made:** _(fill via /task-handoff)_
-**Context for next task:** _(fill via /task-handoff)_
-**Open questions:** _(fill via /task-handoff)_
+**Files changed:**
+- `packages/whatsapp/src/client.ts` — Complete WhatsAppClient implementation with sendText, sendTemplate, getMediaDownloadUrl, downloadMedia, and signature verification
+- `packages/whatsapp/src/index.ts` — Exports for public API
+- `apps/api/src/lib/queue.ts` — BullMQ messaging queue with InboundMessageJob type
+- `apps/api/src/routes/webhooks.ts` — GET and POST handlers for Meta webhook verification and inbound message processing
+- `apps/api/src/routes/webhooks.test.ts` — Unit tests verifying signature validation, challenge response, and message enqueuing (9 tests)
+- `apps/api/src/index.ts` — Queue initialization and webhook router setup; /webhooks routes exempt from auth
+
+**Decisions made:**
+- Used `axios` for Meta API calls (cleaner syntax and error handling than node-fetch)
+- Return 200 immediately on POST before async enqueue to satisfy Meta's 50ms timeout expectation
+- Error handling: If enqueue fails after 200 response, log error (Meta won't retry; in production should alert ops team)
+- Signature verification wraps timingSafeEqual in try-catch to prevent timing attacks on exception paths
+
+**Context for next task:**
+- `messageQueue` is ready in BullMQ with Redis connection via REDIS_URL env var
+- InboundMessageJob payload type defines the complete Meta webhook structure (text, audio, image, document message types)
+- Audio type messages (with mediaId) are enqueued but not processed here; transcription happens in worker (task-005)
+- Webhook routes bypass auth middleware; signature verification is the sole guard
+
+**Open questions:**
+- None — implementation complete with all tests passing

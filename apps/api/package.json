@@ -7,14 +7,19 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "test": "echo \"No tests for @clinic/api\""
+    "test": "vitest run"
   },
   "dependencies": {
     "@clinic/db": "0.1.0",
     "@clinic/shared": "0.1.0",
-    "express": "^4.21.2"
+    "@clinic/whatsapp": "0.1.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "bullmq": "^5.14.2",
+    "express": "^4.21.2",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "vitest": "^2.1.0"
   }
 }

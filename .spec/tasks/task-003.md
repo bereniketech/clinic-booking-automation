@@ -1,7 +1,7 @@
 ---
 task: 003
 feature: clinic-booking-automation
-status: pending
+status: done
 depends_on: [002]
 ---
 
@@ -107,19 +107,36 @@ _Skills: /code-writing-software-development — middleware and route patterns; /
 ---
 
 ## Acceptance Criteria
-- [ ] Request without token returns 401
-- [ ] Request with valid token but no `clinic_id` in `app_metadata` returns 401
-- [ ] Request from `role: receptionist` to admin-only route returns 403 and writes to `audit_logs`
-- [ ] Registered clinic gets a row in `clinics` and admin user with correct `app_metadata`
-- [ ] Invited staff user has correct `clinic_id` in `app_metadata`
-- [ ] Deactivated user cannot authenticate
-- [ ] Unit tests for all middleware paths pass
-- [ ] `/verify` passes
+- [x] Request without token returns 401
+- [x] Request with valid token but no `clinic_id` in `app_metadata` returns 401
+- [x] Request from `role: receptionist` to admin-only route returns 403 and writes to `audit_logs`
+- [x] Registered clinic gets a row in `clinics` and admin user with correct `app_metadata`
+- [x] Invited staff user has correct `clinic_id` in `app_metadata`
+- [x] Deactivated user cannot authenticate
+- [x] Unit tests for all middleware paths pass
+- [x] `/verify` passes
 
 ---
 
 ## Handoff to Next Task
-**Files changed:** _(fill via /task-handoff)_
-**Decisions made:** _(fill via /task-handoff)_
-**Context for next task:** _(fill via /task-handoff)_
-**Open questions:** _(fill via /task-handoff)_
+**Files changed:**
+- `apps/api/src/lib/supabase.ts` — anon + service-role Supabase client singletons
+- `apps/api/src/middleware/auth.ts` — `createAuthMiddleware` + `createRequireRole` factories
+- `apps/api/src/middleware/auth.test.ts` — 10 unit tests (all passing)
+- `apps/api/src/routes/auth.ts` — POST /register, POST /invite, PATCH /users/:id/deactivate
+- `apps/api/src/index.ts` — express.json middleware, global auth with path exemptions, auth + users routers mounted
+- `apps/api/package.json` — added @supabase/supabase-js dep, vitest devDep, updated test script
+
+**Decisions made:**
+- Auth middleware uses factory pattern (`createAuthMiddleware(supabaseClient)`) so Supabase client is injectable for tests
+- `clinicId` is sourced exclusively from JWT `app_metadata.clinic_id` — never from request body/params
+- Audit log writes on 403 are fire-and-forget (`void promise`) to keep response latency low
+- `/health`, `/webhooks/*`, and `/api/v1/auth/register` are exempt from auth via prefix check in index.ts
+- Invite creates the user row with `active: false`; deactivate uses `signOut(userId, 'others')` to revoke sessions
+
+**Context for next task:**
+- `AuthenticatedRequest` interface exposes `clinicId`, `userId`, `role` — all route handlers can extend `Request` with this type
+- `requireRole('admin')` / `requireRole('admin', 'provider')` can be applied to any route handler
+- Service role client (`supabaseAdmin`) is the single client for all write operations in route handlers
+
+**Open questions:** none

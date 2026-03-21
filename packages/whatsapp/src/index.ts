@@ -1,4 +1,6 @@
 import type { Message } from '@clinic/shared';
+export { createWhatsAppClient } from './client.js';
+export type { WhatsAppClient, WhatsAppClientConfig } from './client.js';
 
 export interface SendMessageInput {
   clinicId: string;

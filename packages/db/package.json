@@ -10,6 +10,6 @@
     "test": "echo \"No tests for @clinic/db\""
   },
   "dependencies": {
-    "@clinic/shared": "0.1.0"
+    "@supabase/supabase-js": "^2.49.1"
   }
 }
