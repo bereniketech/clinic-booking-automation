@@ -1,7 +1,7 @@
 ---
 task: 001
 feature: clinic-booking-automation
-status: pending
+status: done
 depends_on: []
 ---
 
@@ -81,17 +81,24 @@ _Skills: /code-writing-software-development — monorepo structure and TypeScrip
 ---
 
 ## Acceptance Criteria
-- [ ] `npm run build` passes across all packages with zero errors
-- [ ] All shared types in `packages/shared/src/index.ts` compile without errors
-- [ ] No circular dependencies between packages
-- [ ] `apps/workers/package.json` does not import from `apps/api`
-- [ ] ESLint and Prettier configs apply to all packages
-- [ ] `/verify` passes
+- [x] `npm run build` passes across all packages with zero errors
+- [x] All shared types in `packages/shared/src/index.ts` compile without errors
+- [x] No circular dependencies between packages
+- [x] `apps/workers/package.json` does not import from `apps/api`
+- [x] ESLint and Prettier configs apply to all packages
+- [x] `/verify` passes
 
 ---
 
 ## Handoff to Next Task
-**Files changed:** _(fill via /task-handoff)_
-**Decisions made:** _(fill via /task-handoff)_
-**Context for next task:** _(fill via /task-handoff)_
-**Open questions:** _(fill via /task-handoff)_
+**Files changed:**
+- `tsconfig.base.json` — removed `paths` aliases (npm workspaces + `types` field in package.json handles resolution)
+- `.eslintrc.cjs` — scoped `next/core-web-vitals` to dashboard override only; added `_`-prefix ignore rule for unused params; excluded `next-env.d.ts`
+
+**Decisions made:**
+- TypeScript path aliases removed from `tsconfig.base.json`; each package declares `"types": "dist/index.d.ts"` so TypeScript resolves cross-package types through node_modules symlinks after build. Build order in root `package.json` enforces correct sequence (shared → db/whatsapp → api/workers/dashboard).
+- No project references used — simpler npm workspaces approach sufficient for scaffold.
+
+**Context for next task:** All packages build and lint clean. `packages/shared/src/index.ts` exports all domain types. Stubs in db, whatsapp, transcription are placeholders — real implementations go in subsequent tasks.
+
+**Open questions:** None.

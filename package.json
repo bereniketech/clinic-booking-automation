@@ -1,0 +1,22 @@
+{
+  "name": "clinic-booking-automation",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @clinic/shared && npm run build -w @clinic/db && npm run build -w @clinic/whatsapp && npm run build -w @clinic/transcription && npm run build -w @clinic/api && npm run build -w @clinic/workers && npm run build -w @clinic/dashboard",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.2.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
+}
