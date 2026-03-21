@@ -8,5 +8,8 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "test": "echo \"No tests for @clinic/transcription\""
+  },
+  "dependencies": {
+    "openai": "^4.52.7"
   }
 }
