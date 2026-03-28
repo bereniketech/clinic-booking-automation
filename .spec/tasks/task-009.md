@@ -1,7 +1,7 @@
 ---
 task: 009
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [005]
 ---
 
@@ -131,13 +131,13 @@ _Skills: /whatsapp-automation — Meta API send; /code-writing-software-developm
 ---
 
 ## Acceptance Criteria
-- [ ] Staff reply: message record saved as `queued`, updated to `sent` after worker sends
-- [ ] After 3 failed Meta API calls: message status = `failed`
-- [ ] `GET /api/v1/conversations` returns only conversations for authenticated clinic
-- [ ] `POST /conversations/:id/messages` returns 404 for conversation in different clinic
-- [ ] All outbound paths (workflow, reminder, staff reply) use `OutboundMessageJob`
-- [ ] Unit tests pass
-- [ ] `/verify` passes
+- [x] Staff reply: message record saved as `queued`, updated to `sent` after worker sends
+- [x] After 3 failed Meta API calls: message status = `failed`
+- [x] `GET /api/v1/conversations` returns only conversations for authenticated clinic
+- [x] `POST /conversations/:id/messages` returns 404 for conversation in different clinic
+- [x] All outbound paths (workflow, reminder, staff reply) use `OutboundMessageJob`
+- [x] Unit tests pass
+- [x] `/verify` passes
 
 ---
 

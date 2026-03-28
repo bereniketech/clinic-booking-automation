@@ -1,7 +1,7 @@
 ---
 task: 012
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [003]
 ---
 
@@ -231,14 +231,14 @@ _Skills: /build-website-web-app — Next.js App Router, Supabase SSR auth; /code
 ---
 
 ## Acceptance Criteria
-- [ ] Unauthenticated request to `/inbox` redirects to `/login`
-- [ ] After login, session persists across page refresh
-- [ ] Admin role: all 7 nav items visible
-- [ ] Staff role: Workflows and Settings nav items hidden
-- [ ] `clinic_id` extracted from JWT `app_metadata` and available in server components
-- [ ] Auth callback route handles invite-accept flow
-- [ ] All placeholder routes render without error
-- [ ] `/verify` passes
+- [x] Unauthenticated request to `/inbox` redirects to `/login`
+- [x] After login, session persists across page refresh
+- [x] Admin role: all 7 nav items visible
+- [x] Staff role: Workflows and Settings nav items hidden
+- [x] `clinic_id` extracted from JWT `app_metadata` and available in server components
+- [x] Auth callback route handles invite-accept flow
+- [x] All placeholder routes render without error
+- [x] `/verify` passes
 
 ---
 

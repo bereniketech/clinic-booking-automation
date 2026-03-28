@@ -1,7 +1,7 @@
 ---
 task: 014
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [006, 012]
 ---
 
@@ -272,14 +272,14 @@ _Skills: /build-website-web-app — multi-step form, calendar UI; /code-writing-
 ---
 
 ## Acceptance Criteria
-- [ ] Calendar renders all appointments for clinic in day and week views
-- [ ] Slot picker shows only available slots from `GET /api/v1/slots`
-- [ ] Booking with a conflicting slot shows "slot just booked" message (409 → user message)
-- [ ] Cancel action calls `PATCH /appointments/:id` with `{ status: 'cancelled' }`
-- [ ] Reschedule opens pre-filled booking modal with new slot selection
-- [ ] Appointment list filters correctly by status
-- [ ] All API calls go through Next.js proxy routes with auth token
-- [ ] `/verify` passes
+- [x] Calendar renders all appointments for clinic in day and week views
+- [x] Slot picker shows only available slots from `GET /api/v1/slots`
+- [x] Booking with a conflicting slot shows "slot just booked" message (409 → user message)
+- [x] Cancel action calls `PATCH /appointments/:id` with `{ status: 'cancelled' }`
+- [x] Reschedule opens pre-filled booking modal with new slot selection
+- [x] Appointment list filters correctly by status
+- [x] All API calls go through Next.js proxy routes with auth token
+- [x] `/verify` passes
 
 ---
 

@@ -44,6 +44,7 @@ export type Database = {
           status: 'active' | 'suspended'
           whatsapp_phone_number_id: string | null
           timezone: string
+          reminder_offset_hours: number
           created_at: string
         }
         Insert: {
@@ -53,6 +54,7 @@ export type Database = {
           status?: 'active' | 'suspended'
           whatsapp_phone_number_id?: string | null
           timezone?: string
+          reminder_offset_hours?: number
           created_at?: string
         }
         Update: {
@@ -62,6 +64,7 @@ export type Database = {
           status?: 'active' | 'suspended'
           whatsapp_phone_number_id?: string | null
           timezone?: string
+          reminder_offset_hours?: number
           created_at?: string
         }
         Relationships: [
@@ -333,6 +336,9 @@ export type Database = {
           id: string
           clinic_id: string
           customer_id: string
+          wa_phone: string | null
+          assigned_to: string | null
+          unread_count: number
           last_message_at: string | null
           created_at: string
         }
@@ -340,6 +346,9 @@ export type Database = {
           id?: string
           clinic_id: string
           customer_id: string
+          wa_phone?: string | null
+          assigned_to?: string | null
+          unread_count?: number
           last_message_at?: string | null
           created_at?: string
         }
@@ -347,6 +356,9 @@ export type Database = {
           id?: string
           clinic_id?: string
           customer_id?: string
+          wa_phone?: string | null
+          assigned_to?: string | null
+          unread_count?: number
           last_message_at?: string | null
           created_at?: string
         }
@@ -503,11 +515,95 @@ export type Database = {
           }
         ]
       }
+      blocks: {
+        Row: {
+          id: string
+          clinic_id: string
+          user_id: string
+          title: string
+          starts_at: string
+          ends_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          clinic_id: string
+          user_id: string
+          title: string
+          starts_at: string
+          ends_at: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          clinic_id?: string
+          user_id?: string
+          title?: string
+          starts_at?: string
+          ends_at?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'blocks_clinic_id_fkey'
+            columns: ['clinic_id']
+            referencedRelation: 'clinics'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'blocks_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      customer_entities: {
+        Row: {
+          id: string
+          clinic_id: string
+          customer_id: string
+          entity_type: string
+          data: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          clinic_id: string
+          customer_id: string
+          entity_type: string
+          data?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          clinic_id?: string
+          customer_id?: string
+          entity_type?: string
+          data?: Json
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'customer_entities_clinic_id_fkey'
+            columns: ['clinic_id']
+            referencedRelation: 'clinics'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'customer_entities_customer_id_fkey'
+            columns: ['customer_id']
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       forms: {
         Row: {
           id: string
           clinic_id: string
           name: string
+          slug: string
           schema: Json
           active: boolean
           created_at: string
@@ -516,6 +612,7 @@ export type Database = {
           id?: string
           clinic_id: string
           name: string
+          slug: string
           schema?: Json
           active?: boolean
           created_at?: string
@@ -524,6 +621,7 @@ export type Database = {
           id?: string
           clinic_id?: string
           name?: string
+          slug?: string
           schema?: Json
           active?: boolean
           created_at?: string
@@ -703,8 +801,8 @@ export type Database = {
       message_direction: 'inbound' | 'outbound'
       message_type: 'text' | 'audio'
       message_status: 'queued' | 'sent' | 'delivered' | 'read' | 'failed'
-      workflow_trigger: 'appointment.created' | 'appointment.completed' | 'no_response' | 'time_based'
-      workflow_run_status: 'pending' | 'running' | 'completed' | 'failed'
+      workflow_trigger: 'appointment.created' | 'appointment.completed' | 'no_response' | 'time_based' | 'message.received' | 'workflow.triggered'
+      workflow_run_status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
       notification_type: 'reminder' | 'follow_up' | 'custom'
       notification_status: 'pending' | 'sent' | 'cancelled' | 'failed'
     }

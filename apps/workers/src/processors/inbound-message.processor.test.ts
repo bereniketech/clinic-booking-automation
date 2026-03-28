@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Job } from 'bullmq'
 import type { DbClient } from '@clinic/db'
 import type { WhatsAppClient } from '@clinic/whatsapp'
@@ -5,38 +6,42 @@ import type { TranscriptionClient } from '@clinic/transcription'
 import { processInboundMessage } from './inbound-message.processor.js'
 import type { InboundMessageJobData } from '../lib/queue.js'
 
+vi.mock('../lib/queue.js', () => ({
+  workflowQueue: { add: vi.fn() },
+}))
+
 describe('InboundMessageProcessor', () => {
-  let mockDb: jest.Mocked<DbClient>
-  let mockWhatsAppClient: jest.Mocked<WhatsAppClient>
-  let mockTranscriptionClient: jest.Mocked<TranscriptionClient>
-  let mockJob: jest.Mocked<Job<InboundMessageJobData>>
+  let mockDb: DbClient
+  let mockWhatsAppClient: WhatsAppClient
+  let mockTranscriptionClient: TranscriptionClient
+  let mockJob: Job<InboundMessageJobData>
 
   beforeEach(() => {
     // Mock database
     mockDb = {
-      from: jest.fn(),
+      from: vi.fn(),
       auth: {
-        setSession: jest.fn(),
+        setSession: vi.fn(),
       },
-    } as unknown as jest.Mocked<DbClient>
+    } as unknown as DbClient
 
     // Mock WhatsApp client
     mockWhatsAppClient = {
-      getMediaDownloadUrl: jest.fn(),
-      downloadMedia: jest.fn(),
-      verifyWebhookSignature: jest.fn(),
-      sendText: jest.fn(),
-      sendTemplate: jest.fn(),
-    } as unknown as jest.Mocked<WhatsAppClient>
+      getMediaDownloadUrl: vi.fn(),
+      downloadMedia: vi.fn(),
+      verifyWebhookSignature: vi.fn(),
+      sendText: vi.fn(),
+      sendTemplate: vi.fn(),
+    } as unknown as WhatsAppClient
 
     // Mock Transcription client
     mockTranscriptionClient = {
-      transcribe: jest.fn().mockResolvedValue({
+      transcribe: vi.fn().mockResolvedValue({
         text: 'Hello from voice message',
         durationSeconds: 5,
         failed: false,
       }),
-    }
+    } as unknown as TranscriptionClient
 
     // Mock Job
     mockJob = {
@@ -70,33 +75,33 @@ describe('InboundMessageProcessor', () => {
           ],
         },
       },
-    } as unknown as jest.Mocked<Job<InboundMessageJobData>>
+    } as unknown as Job<InboundMessageJobData>
   })
 
   describe('Text message processing', () => {
     it('should save text message correctly', async () => {
       // Setup mock responses
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: { id: 'clinic-123' },
           error: null,
         }),
       }
 
-      mockDb.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue(mockQuery),
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      mockDb.from = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue(mockQuery),
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'message-123' },
               error: null,
             }),
           }),
         }),
-        upsert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        upsert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'customer-123' },
               error: null,
             }),
@@ -116,26 +121,26 @@ describe('InboundMessageProcessor', () => {
 
     it('should upsert customer on first contact', async () => {
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: { id: 'clinic-123' },
           error: null,
         }),
       }
 
-      mockDb.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue(mockQuery),
-        upsert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      mockDb.from = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue(mockQuery),
+        upsert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'customer-123' },
               error: null,
             }),
           }),
         }),
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'message-123' },
               error: null,
             }),
@@ -168,30 +173,30 @@ describe('InboundMessageProcessor', () => {
     })
 
     it('should transcribe audio message and discard buffer', async () => {
-      mockWhatsAppClient.getMediaDownloadUrl = jest.fn().mockResolvedValue('https://example.com/audio.ogg')
-      mockWhatsAppClient.downloadMedia = jest.fn().mockResolvedValue(Buffer.from('audio data'))
+      mockWhatsAppClient.getMediaDownloadUrl = vi.fn().mockResolvedValue('https://example.com/audio.ogg')
+      mockWhatsAppClient.downloadMedia = vi.fn().mockResolvedValue(Buffer.from('audio data'))
 
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: { id: 'clinic-123' },
           error: null,
         }),
       }
 
-      mockDb.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue(mockQuery),
-        upsert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      mockDb.from = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue(mockQuery),
+        upsert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'customer-123' },
               error: null,
             }),
           }),
         }),
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'message-123' },
               error: null,
             }),
@@ -214,36 +219,36 @@ describe('InboundMessageProcessor', () => {
     })
 
     it('should save fallback message on transcription failure', async () => {
-      mockTranscriptionClient.transcribe = jest.fn().mockResolvedValue({
+      mockTranscriptionClient.transcribe = vi.fn().mockResolvedValue({
         text: '[Voice message — transcription failed]',
         durationSeconds: 0,
         failed: true,
       })
 
-      mockWhatsAppClient.getMediaDownloadUrl = jest.fn().mockResolvedValue('https://example.com/audio.ogg')
-      mockWhatsAppClient.downloadMedia = jest.fn().mockResolvedValue(Buffer.from('audio data'))
+      mockWhatsAppClient.getMediaDownloadUrl = vi.fn().mockResolvedValue('https://example.com/audio.ogg')
+      mockWhatsAppClient.downloadMedia = vi.fn().mockResolvedValue(Buffer.from('audio data'))
 
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: { id: 'clinic-123' },
           error: null,
         }),
       }
 
-      mockDb.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue(mockQuery),
-        upsert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      mockDb.from = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue(mockQuery),
+        upsert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'customer-123' },
               error: null,
             }),
           }),
         }),
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'message-123' },
               error: null,
             }),
@@ -265,26 +270,26 @@ describe('InboundMessageProcessor', () => {
   describe('Workflow execution enqueueing', () => {
     it('should enqueue workflow execution after message processed', async () => {
       const mockQuery = {
-        eq: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
           data: { id: 'clinic-123' },
           error: null,
         }),
       }
 
-      mockDb.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue(mockQuery),
-        upsert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+      mockDb.from = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue(mockQuery),
+        upsert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'customer-123' },
               error: null,
             }),
           }),
         }),
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
               data: { id: 'message-123' },
               error: null,
             }),

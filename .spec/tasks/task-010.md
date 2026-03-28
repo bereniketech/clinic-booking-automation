@@ -1,7 +1,7 @@
 ---
 task: 010
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [003]
 ---
 
@@ -128,13 +128,13 @@ _Skills: /code-writing-software-development — route and service patterns; /pos
 ---
 
 ## Acceptance Criteria
-- [ ] Search returns only customers for authenticated clinic
-- [ ] Tag filter returns customers containing that tag
-- [ ] Timeline includes messages (with `transcribed` flag), appointments, and form responses in chronological order
-- [ ] Adding a tag is immediately reflected in search and workflow condition evaluation
-- [ ] `customer_entities` CRUD works without affecting core customer model
-- [ ] Unit tests pass
-- [ ] `/verify` passes
+- [x] Search returns only customers for authenticated clinic
+- [x] Tag filter returns customers containing that tag
+- [x] Timeline includes messages (with `transcribed` flag), appointments, and form responses in chronological order
+- [x] Adding a tag is immediately reflected in search and workflow condition evaluation
+- [x] `customer_entities` CRUD works without affecting core customer model
+- [x] Unit tests pass
+- [x] `/verify` passes
 
 ---
 

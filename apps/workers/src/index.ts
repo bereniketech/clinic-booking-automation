@@ -2,10 +2,13 @@ import { Worker } from 'bullmq'
 import { createDbClient } from '@clinic/db'
 import { createWhatsAppClient } from '@clinic/whatsapp'
 import { createTranscriptionClient } from '@clinic/transcription'
-import { messagingQueue, workflowQueue } from './lib/queue.js'
+import { messagingQueue, workflowQueue, reminderQueue } from './lib/queue.js'
 import { connectRedis, disconnectRedis } from './lib/redis.js'
 import { logger } from './lib/logger.js'
 import { processInboundMessage } from './processors/inbound-message.processor.js'
+import { processAppointmentCreated } from './processors/appointment-created.processor.js'
+import { processReminder } from './processors/reminder.processor.js'
+import { processOutboundMessage } from './processors/outbound-message.processor.js'
 
 // Load environment variables
 const requiredEnvVars = [
@@ -59,6 +62,48 @@ async function startWorkers(): Promise<void> {
       }
     )
 
+    // Appointment created worker — schedules reminders
+    const appointmentWorker = new Worker(
+      'appointments',
+      async (job) => {
+        return processAppointmentCreated(job, { db, reminderQueue })
+      },
+      {
+        connection: {
+          url: process.env.REDIS_URL || 'redis://localhost:6379',
+        },
+        concurrency: 2,
+      }
+    )
+
+    // Reminder worker — fires when delay expires, enqueues outbound message
+    const reminderWorker = new Worker(
+      'reminders',
+      async (job) => {
+        return processReminder(job, { db, messagingQueue })
+      },
+      {
+        connection: {
+          url: process.env.REDIS_URL || 'redis://localhost:6379',
+        },
+        concurrency: 2,
+      }
+    )
+
+    // Outbound message worker — sends WhatsApp messages
+    const outboundWorker = new Worker(
+      'outbound',
+      async (job) => {
+        return processOutboundMessage(job, { db, whatsappClient })
+      },
+      {
+        connection: {
+          url: process.env.REDIS_URL || 'redis://localhost:6379',
+        },
+        concurrency: 3,
+      }
+    )
+
     // Workflow processing placeholder — can be implemented later
     const workflowWorker = new Worker(
       'workflows',
@@ -90,6 +135,48 @@ async function startWorkers(): Promise<void> {
       logger.info({ jobId: job.id }, 'InboundMessageJob completed')
     })
 
+    appointmentWorker.on('failed', (job, err) => {
+      logger.error(
+        {
+          jobId: job?.id,
+          err: err instanceof Error ? err.message : err,
+        },
+        'AppointmentCreatedJob failed'
+      )
+    })
+
+    appointmentWorker.on('completed', (job) => {
+      logger.info({ jobId: job.id }, 'AppointmentCreatedJob completed')
+    })
+
+    reminderWorker.on('failed', (job, err) => {
+      logger.error(
+        {
+          jobId: job?.id,
+          err: err instanceof Error ? err.message : err,
+        },
+        'ReminderJob failed'
+      )
+    })
+
+    reminderWorker.on('completed', (job) => {
+      logger.info({ jobId: job.id }, 'ReminderJob completed')
+    })
+
+    outboundWorker.on('failed', (job, err) => {
+      logger.error(
+        {
+          jobId: job?.id,
+          err: err instanceof Error ? err.message : err,
+        },
+        'OutboundMessageJob failed'
+      )
+    })
+
+    outboundWorker.on('completed', (job) => {
+      logger.info({ jobId: job.id }, 'OutboundMessageJob completed')
+    })
+
     workflowWorker.on('failed', (job, err) => {
       logger.error(
         {
@@ -100,14 +187,20 @@ async function startWorkers(): Promise<void> {
       )
     })
 
-    logger.info('Workers started with concurrency 5 (messaging), 2 (workflows)')
+    logger.info(
+      'Workers started: messaging(5), appointments(2), reminders(2), outbound(3), workflows(2)'
+    )
 
     // Graceful shutdown
     const gracefulShutdown = async () => {
       logger.info('Shutting down workers...')
       await messagingWorker.close()
+      await appointmentWorker.close()
+      await reminderWorker.close()
+      await outboundWorker.close()
       await workflowWorker.close()
       await messagingQueue.close()
+      await reminderQueue.close()
       await workflowQueue.close()
       await disconnectRedis()
       logger.info('Workers shut down gracefully')

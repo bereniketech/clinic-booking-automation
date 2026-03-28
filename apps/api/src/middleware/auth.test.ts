@@ -33,7 +33,7 @@ function mockReq(overrides: Partial<Request> = {}): Request {
 
 describe('authMiddleware', () => {
   it('returns 401 MISSING_TOKEN when no Authorization header', async () => {
-    const supabaseMock = { auth: { getUser: vi.fn() } } as any
+    const supabaseMock = { auth: { getUser: vi.fn() } } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: {} })
@@ -48,7 +48,7 @@ describe('authMiddleware', () => {
   })
 
   it('returns 401 MISSING_TOKEN when Authorization header is not Bearer', async () => {
-    const supabaseMock = { auth: { getUser: vi.fn() } } as any
+    const supabaseMock = { auth: { getUser: vi.fn() } } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: { authorization: 'Basic dXNlcjpwYXNz' } })
@@ -67,7 +67,7 @@ describe('authMiddleware', () => {
       auth: {
         getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: new Error('invalid') }),
       },
-    } as any
+    } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: { authorization: 'Bearer bad-token' } })
@@ -86,7 +86,7 @@ describe('authMiddleware', () => {
       auth: {
         getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
       },
-    } as any
+    } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: { authorization: 'Bearer some-token' } })
@@ -108,7 +108,7 @@ describe('authMiddleware', () => {
           error: null,
         }),
       },
-    } as any
+    } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: { authorization: 'Bearer valid-token' } })
@@ -135,7 +135,7 @@ describe('authMiddleware', () => {
           error: null,
         }),
       },
-    } as any
+    } as unknown as Parameters<typeof createAuthMiddleware>[0]
     const middleware = createAuthMiddleware(supabaseMock)
 
     const req = mockReq({ headers: { authorization: 'Bearer good-token' } })
@@ -160,7 +160,7 @@ describe('authMiddleware', () => {
 
 describe('requireRole', () => {
   let insertMock: ReturnType<typeof vi.fn>
-  let adminMock: any
+  let adminMock: Parameters<typeof createRequireRole>[0]
 
   beforeEach(() => {
     insertMock = vi.fn().mockReturnValue({
@@ -168,7 +168,7 @@ describe('requireRole', () => {
     })
     adminMock = {
       from: vi.fn().mockReturnValue({ insert: insertMock }),
-    }
+    } as unknown as Parameters<typeof createRequireRole>[0]
   })
 
   function makeAuthReq(role: string, clinicId = 'clinic-1', userId = 'user-1'): Request {

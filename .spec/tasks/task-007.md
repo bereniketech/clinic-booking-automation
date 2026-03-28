@@ -1,7 +1,7 @@
 ---
 task: 007
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [006, 005]
 ---
 
@@ -146,13 +146,13 @@ _Skills: /whatsapp-automation — template message; /code-writing-software-devel
 ---
 
 ## Acceptance Criteria
-- [ ] Reminder scheduled exactly once per appointment (deterministic jobId deduplicates)
-- [ ] Reminder fires and sends exactly once (idempotency DB check)
-- [ ] Cancelling appointment removes BullMQ job and updates `notification_schedules.status = 'cancelled'`
-- [ ] Appointment with `status = 'cancelled'` at fire time: reminder silently skipped
-- [ ] `reminder_offset_hours` from clinic config respected
-- [ ] Unit tests pass
-- [ ] `/verify` passes
+- [x] Reminder scheduled exactly once per appointment (deterministic jobId deduplicates)
+- [x] Reminder fires and sends exactly once (idempotency DB check)
+- [x] Cancelling appointment removes BullMQ job and updates `notification_schedules.status = 'cancelled'`
+- [x] Appointment with `status = 'cancelled'` at fire time: reminder silently skipped
+- [x] `reminder_offset_hours` from clinic config respected
+- [x] Unit tests pass
+- [x] `/verify` passes
 
 ---
 

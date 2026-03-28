@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import type { TranscriptionResult, TranscriptionClient } from '@clinic/transcription'
 
 describe('TranscriptionClient', () => {

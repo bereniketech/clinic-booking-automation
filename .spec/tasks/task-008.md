@@ -1,7 +1,7 @@
 ---
 task: 008
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [005]
 ---
 
@@ -155,14 +155,14 @@ _Skills: /code-writing-software-development — processor and condition evaluati
 ---
 
 ## Acceptance Criteria
-- [ ] Workflow only fires for matching `trigger_type` and `clinic_id`
-- [ ] All conditions false → workflow skipped, `workflow_runs` logged as `skipped`
-- [ ] `trigger_workflow` at depth 6 → silently stopped, no infinite loop
-- [ ] Failed action → retried 3× by BullMQ, then `workflow_runs` status = `failed`
-- [ ] `workflow_runs` row written for every execution (including skipped)
-- [ ] `send_whatsapp` action enqueues `OutboundMessageJob`, never calls WhatsApp directly
-- [ ] Unit tests for `evaluateConditions` pass all operator cases
-- [ ] `/verify` passes
+- [x] Workflow only fires for matching `trigger_type` and `clinic_id`
+- [x] All conditions false → workflow skipped, `workflow_runs` logged as `skipped`
+- [x] `trigger_workflow` at depth 6 → silently stopped, no infinite loop
+- [x] Failed action → retried 3× by BullMQ, then `workflow_runs` status = `failed`
+- [x] `workflow_runs` row written for every execution (including skipped)
+- [x] `send_whatsapp` action enqueues `OutboundMessageJob`, never calls WhatsApp directly
+- [x] Unit tests for `evaluateConditions` pass all operator cases
+- [x] `/verify` passes
 
 ---
 

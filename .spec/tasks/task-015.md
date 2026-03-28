@@ -1,7 +1,7 @@
 ---
 task: 015
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [006, 008, 012]
 ---
 
@@ -331,15 +331,15 @@ _Skills: /build-website-web-app — forms, CRUD UI, conditional rendering; /code
 ---
 
 ## Acceptance Criteria
-- [ ] Non-admin user accessing `/settings/*` is redirected to `/inbox`
-- [ ] Service with no assigned staff: slot generation returns empty array (confirmed via calendar)
-- [ ] Working hours change immediately reflected in next slot generation call
-- [ ] Staff invite sends `POST /api/v1/staff/invite` and pending user appears in staff list
-- [ ] Workflow active toggle calls `PATCH /workflows/:id/toggle` and reflects immediately in list
-- [ ] Workflow builder saves correct JSON shape matching `WorkflowCondition[]` + `WorkflowAction[]`
-- [ ] Holiday/block added via UI appears in calendar as blocked slot
-- [ ] All proxy routes correctly forward auth token to `apps/api`
-- [ ] `/verify` passes
+- [x] Non-admin user accessing `/settings/*` is redirected to `/inbox`
+- [x] Service with no assigned staff: slot generation returns empty array (confirmed via calendar)
+- [x] Working hours change immediately reflected in next slot generation call
+- [x] Staff invite sends `POST /api/v1/staff/invite` and pending user appears in staff list
+- [x] Workflow active toggle calls `PATCH /workflows/:id/toggle` and reflects immediately in list
+- [x] Workflow builder saves correct JSON shape matching `WorkflowCondition[]` + `WorkflowAction[]`
+- [x] Holiday/block added via UI appears in calendar as blocked slot
+- [x] All proxy routes correctly forward auth token to `apps/api`
+- [x] `/verify` passes
 
 ---
 

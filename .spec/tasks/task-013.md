@@ -1,7 +1,7 @@
 ---
 task: 013
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [009, 012]
 ---
 
@@ -280,14 +280,14 @@ _Skills: /build-website-web-app — Supabase Realtime, server/client component s
 ---
 
 ## Acceptance Criteria
-- [ ] New inbound message appears in conversation list within 2 seconds (Realtime)
-- [ ] Transcribed voice messages show mic icon + transcribed text (no audio player)
-- [ ] Staff reply sends POST to API proxy, message appears in thread immediately
-- [ ] Conversation list sorted by `last_message_at` descending
-- [ ] Unread count increments on new inbound message
-- [ ] Conversation assignment updates via API
-- [ ] Realtime subscription unsubscribed when component unmounts
-- [ ] `/verify` passes
+- [x] New inbound message appears in conversation list within 2 seconds (Realtime)
+- [x] Transcribed voice messages show mic icon + transcribed text (no audio player)
+- [x] Staff reply sends POST to API proxy, message appears in thread immediately
+- [x] Conversation list sorted by `last_message_at` descending
+- [x] Unread count increments on new inbound message
+- [x] Conversation assignment updates via API
+- [x] Realtime subscription unsubscribed when component unmounts
+- [x] `/verify` passes
 
 ---
 

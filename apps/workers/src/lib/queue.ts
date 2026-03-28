@@ -54,3 +54,39 @@ export interface WorkflowExecutionJobData {
   trigger: string
   content: string
 }
+
+// Queue for reminders
+export const reminderQueue = new Queue('reminders', {
+  connection: {
+    url: redisUrl,
+  },
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 2000,
+    },
+  },
+})
+
+export interface OutboundMessageJobData {
+  clinicId: string
+  to: string
+  type: 'text' | 'template'
+  message?: string
+  template?: string
+  params?: string[]
+  messageRecordId?: string
+}
+
+export interface AppointmentCreatedEvent {
+  appointmentId: string
+  clinicId: string
+  customerId: string
+  startsAt: string
+}
+
+export interface ReminderJobData {
+  appointmentId: string
+  clinicId: string
+}

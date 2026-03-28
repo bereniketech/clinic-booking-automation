@@ -1,7 +1,7 @@
 ---
 task: 011
 feature: clinic-booking-automation
-status: pending
+status: completed
 depends_on: [003, 006]
 ---
 
@@ -200,15 +200,15 @@ _Skills: /code-writing-software-development — route patterns, Zod validation; 
 ---
 
 ## Acceptance Criteria
-- [ ] Form schema stored as JSONB and retrievable
-- [ ] Submission with missing required field returns 422 with field-level errors
-- [ ] Submission with wrong type (e.g. string for number field) returns 422
-- [ ] Valid submission saved and linked to `clinic_id` from form row
-- [ ] `customerId` in submission body links response to customer (optional — null if absent)
-- [ ] Unknown slug returns 404 (no auth leak)
-- [ ] All staff-facing endpoints enforce `clinic_id` from JWT
-- [ ] Unit tests pass
-- [ ] `/verify` passes
+- [x] Form schema stored as JSONB and retrievable
+- [x] Submission with missing required field returns 422 with field-level errors
+- [x] Submission with wrong type (e.g. string for number field) returns 422
+- [x] Valid submission saved and linked to `clinic_id` from form row
+- [x] `customerId` in submission body links response to customer (optional — null if absent)
+- [x] Unknown slug returns 404 (no auth leak)
+- [x] All staff-facing endpoints enforce `clinic_id` from JWT
+- [x] Unit tests pass
+- [x] `/verify` passes
 
 ---
 
